@@ -6,14 +6,17 @@ QT += widgets network sql xml
  
 SOURCES += \
 	main.cpp \
-	T_MainWindow.cpp
+	T_TerRaTronNewInterfaceMainWindow.cpp \
+	T_TerRaTronNewInterfaceWidget.cpp
 	
  
 HEADERS += \  
-	T_MainWindow.hpp
+	T_TerRaTronNewInterfaceMainWindow.hpp \
+	T_TerRaTronNewInterfaceWidget.hpp
 	
 
 FORMS += \
-	forms/mainWindow.ui
+	forms/TerRaTronNewInterfaceMainWindow.ui \
+	forms/TerRaTronNewInterfaceWidget.ui
 	
 RESOURCES += resources/resources.qrc
