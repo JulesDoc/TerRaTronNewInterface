@@ -6,6 +6,8 @@
 #include <QListWidget>
 #include <QPointer>
 #include <QFile>
+#include <QDir>
+
 #include "T_Database.hpp"
 #include "T_TronParser.hpp"
 #include "T_TronValidator.hpp"
@@ -23,19 +25,14 @@ public:
 	virtual ~T_TerRaTronNewInterfaceMainWindow();
 
 private:
-	void parseValidate();
 	void initializeGUI();
-	T_TerRaTronNewInterfaceWidget *nvWidget() const;
 
 private slots:
-	void openFile();
 
 private:
 	Ui_TerRaTronNewInterfaceMainWindow *m_ui;
 	RT_Database m_db;
-	QString m_fileName{};
-	QFile m_fileHandler;
-	
+	T_TerRaTronNewInterfaceWidget *m_widget;
 	
 	enum {
 		TronKeyRole = Qt::UserRole,

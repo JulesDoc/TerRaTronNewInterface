@@ -1,6 +1,10 @@
 <RCC>
   <qresource prefix="/images">
     <file>open.png</file>
-	<file>save.png</file>
+	  <file>save.png</file>
+    <file>validate.png</file>
+    <file>close_file.png</file>
+    <file>validate_and_save.png</file>
+    <file>error.png</file>
   </qresource>
 </RCC>
