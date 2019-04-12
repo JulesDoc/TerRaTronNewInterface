@@ -1,19 +1,12 @@
 #pragma once
 
 #include <QMainWindow>
-#include <QSqlRecord>
-#include <QSqlDatabase>
-#include <QListWidget>
 #include <QPointer>
-#include <QFile>
-#include <QDir>
 
 #include "T_Database.hpp"
-#include "T_TronParser.hpp"
-#include "T_TronValidator.hpp"
-
 
 class Ui_TerRaTronNewInterfaceMainWindow;
+class T_TerRaTronNewInterfaceNoticeTreeView;
 class T_TerRaTronNewInterfaceWidget;
 
 class T_TerRaTronNewInterfaceMainWindow : public QMainWindow
@@ -32,12 +25,5 @@ private slots:
 private:
 	Ui_TerRaTronNewInterfaceMainWindow *m_ui;
 	RT_Database m_db;
-	T_TerRaTronNewInterfaceWidget *m_widget;
-	
-	enum {
-		TronKeyRole = Qt::UserRole,
-		TronDataRole,
-		TronSavedDataRole,
-		TronChangedRole,
-	};
+	QPointer<T_TerRaTronNewInterfaceWidget> m_widget;
 };

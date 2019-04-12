@@ -1,3 +1,5 @@
+#include <QBuffer>
+
 #include "T_TerRaTronNewInterfaceObject.hpp"
 #include "T_TronParser.hpp"
 #include "T_TronValidator.hpp"
@@ -10,37 +12,33 @@ T_TerRaTronNewInterfaceObject::T_TerRaTronNewInterfaceObject()
 	qRegisterMetaType<T_String>("T_String");
 }
 
-
 T_TerRaTronNewInterfaceObject::~T_TerRaTronNewInterfaceObject()
 {
-
 }
 
-void T_TerRaTronNewInterfaceObject::validate(const QString &fileContent) 
+void T_TerRaTronNewInterfaceObject::validate(const QString &rcFileContent) 
 {
 	qDebug() << Q_FUNC_INFO;
+	
+	if (m_apDBBundle.get() == 0)
+	{
+		m_apDBBundle = APT_TronDBBundle(new T_TronDBBundle(T_DBTarget::DEVL, T_DBName::TRS_DB, T_TronContext::ONLINE_VALIDATION));
+	}
+	T_TronParser parser(*m_apDBBundle);
+	T_TronValidator validator(*m_apDBBundle);
 
-	T_TronDBBundle aDBBundle(T_DBTarget::DEVL, T_DBName::TRS_DB, T_TronContext::ONLINE_VALIDATION);
-	T_TronParser parser(aDBBundle);
-	T_TronValidator validator(aDBBundle);
-
-	QByteArray fileContentQByte = fileContent.toUtf8();
+	QByteArray fileContentQByte = rcFileContent.toUtf8();
 	QBuffer buf(&fileContentQByte);
 
 	bool ok = buf.open(QIODevice::ReadOnly | QIODevice::Text);
 	if (ok)
 	{
 		T_NtcElect rNtcElect;
-		T_String messages;
-		T_TronMessageContainer messageContainer;
-
-		parser.parse(&buf, rNtcElect);
+		//TODO: Change QBuffer to String. Overloaded constructor of parse
+		parser.parse(&buf, rNtcElect, "UTF-8");
 		ok = validator.validate(rNtcElect);
-		
-		rNtcElect.getMessagesAsString(messages);
-		rNtcElect.getMessageContainer(messageContainer);
-
-		Q_EMIT resultReady(messageContainer, messages);
+	
+		Q_EMIT resultReady(rNtcElect);
 	}
 	
 }
