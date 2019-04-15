@@ -42,12 +42,12 @@ signals:
 
 private:
 	Ui_TerRaTronNewInterfaceWidget *m_ui;
-	T_NtcElectHighlighter *m_highlighter1;
-	T_TerRaTronNewInterfaceObject *m_worker;
-	//QPointer<T_NtcElectHighlighter> m_highlighter1;
-	//QPointer<T_TerRaTronNewInterfaceObject> m_worker;
+	//T_NtcElectHighlighter *m_highlighter1;
+	//T_TerRaTronNewInterfaceObject *m_worker;
+	QPointer<T_NtcElectHighlighter> m_highlighter1;
+	QPointer<T_TerRaTronNewInterfaceObject> m_worker;
 	QPointer<QThread> m_workerThread;
-	
+
 	QString m_pathFile{};
 	QString m_fileName{};
 	QString m_fileContent{};

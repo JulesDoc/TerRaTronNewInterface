@@ -1,11 +1,10 @@
-#include <QtWidgets>
-#include <QMainWindow>
 
 #include "T_TerRaTronNewInterfaceObject.hpp"
 #include "T_TerRaTronNewInterfaceWidget.hpp"
 #include "ui_TerRaTronNewInterfaceWidget.h"
 #include "t_xmlhighlighter.hpp"
 #include "T_NtcElectHighlighter.hpp"
+#include "codeeditor.h"
 
 T_TerRaTronNewInterfaceWidget::T_TerRaTronNewInterfaceWidget(QWidget *parent)
 	:QWidget(parent),
@@ -19,7 +18,7 @@ T_TerRaTronNewInterfaceWidget::T_TerRaTronNewInterfaceWidget(QWidget *parent)
 	connect(m_worker, &T_TerRaTronNewInterfaceObject::resultReady, this, &T_TerRaTronNewInterfaceWidget::showResult);	
 	
 	m_workerThread->start();
-
+	
 	initializeGUI();
 }
 
@@ -36,6 +35,7 @@ void T_TerRaTronNewInterfaceWidget::initializeGUI()
 	m_ui = new Ui_TerRaTronNewInterfaceWidget;
 	m_ui->setupUi(this);
 	m_ui->autoValidate_checkBox->setDisabled(true);
+	//m_ui->autoValidate_checkBox->setVisible(false);
 	m_ui->save_and_revalidate_button->setDisabled(true);
 
 	connect(m_ui->actionSave_and_revalidate, &QAction::triggered, this, &T_TerRaTronNewInterfaceWidget::saveValidate);
@@ -92,26 +92,22 @@ void T_TerRaTronNewInterfaceWidget::readFile()
 
 	m_dir = QFileInfo(m_fileName).absoluteDir().absolutePath();
 	QFile fileHandler(m_fileName);
-	//m_fileHandler.setFileName(m_fileName);
 
 	if (!fileHandler.open(QIODevice::ReadWrite | QIODevice::Text)) return;
 
 	QTextStream inputStream(&fileHandler);
 	QString fileLine = inputStream.readLine();
 
-	//m_ui->fileContent_textEdit->toPlainText();
 	while (!fileLine.isNull())
 	{
-		m_fileContent.append(fileLine);
+		m_ui->fileContent_textEdit->appendPlainText(fileLine);
 		fileLine = inputStream.readLine();
-		if (!fileLine.isEmpty()) m_fileContent.append("\n");
 	}
 
 	m_pathFile = m_dir.absoluteFilePath(m_fileName);
-	display(m_fileContent);
 	fileHandler.close();
 
-	QMetaObject::invokeMethod(m_worker, "validate", Q_ARG(QString, m_fileContent));
+	QMetaObject::invokeMethod(m_worker, "validate", Q_ARG(QString, m_ui->fileContent_textEdit->toPlainText()));
 
 	m_ui->autoValidate_checkBox->setDisabled(false);
 	m_ui->save_and_revalidate_button->setDisabled(false);
@@ -136,7 +132,24 @@ void T_TerRaTronNewInterfaceWidget::showResult(const T_NtcElect& rcNtcElect)
 
 void T_TerRaTronNewInterfaceWidget::handleCursorPositionChanged()
 {
+
 	QTextCursor cursor = m_ui->fileContent_textEdit->textCursor();
+
+	/*QList<QTextEdit::ExtraSelection> extraSelections;
+	QTextEdit::ExtraSelection selection;
+
+	QColor lineColor = QColor(Qt::yellow).lighter(160);
+
+	selection.format.setBackground(lineColor);
+	selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+	selection.cursor = m_ui->fileContent_textEdit->textCursor();
+	selection.cursor.clearSelection();
+	extraSelections.append(selection);
+	
+	m_ui->fileContent_textEdit->setExtraSelections(extraSelections);*/
+
+
+
 	const int line = cursor.blockNumber() + 1;
 	const int col = cursor.columnNumber();
 
