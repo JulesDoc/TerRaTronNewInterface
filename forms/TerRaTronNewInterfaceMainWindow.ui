@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ui version="5.0">
+<ui version="4.0">
  <class>TerRaTronNewInterfaceMainWindow</class>
  <widget class="QMainWindow" name="TerRaTronNewInterfaceMainWindow">
   <property name="geometry">
@@ -33,10 +33,10 @@
     <property name="title">
      <string>Options</string>
     </property>
-    <addaction name="actionApply_deep_validation"/>
+    <addaction name="actionSave_validate"/>
     <addaction name="separator"/>
-    <addaction name="actionUse_XML"/>
-    <addaction name="actionDraw_line_number_in_error_warning_messages"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionValidate"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -61,6 +61,8 @@
    </attribute>
    <addaction name="actionOpen_file"/>
    <addaction name="actionClose_file"/>
+   <addaction name="actionSave"/>
+   <addaction name="actionValidate"/>
   </widget>
   <action name="actionOpen_file">
    <property name="icon">
@@ -75,11 +77,24 @@
    </property>
   </action>
   <action name="actionQuit">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/images/close.png</normaloff>:/images/close.png</iconset>
+   </property>
    <property name="text">
     <string>Quit</string>
    </property>
   </action>
-  <action name="actionUse_XML">
+  <action name="actionAbout_TerRaNV">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/images/info.png</normaloff>:/images/info.png</iconset>
+   </property>
+   <property name="text">
+    <string>About TerRaNV</string>
+   </property>
+  </action>
+  <action name="actionSave_validate">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -87,43 +102,50 @@
     <bool>false</bool>
    </property>
    <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Use XML</string>
-   </property>
-  </action>
-  <action name="actionAbout_TerRaNV">
-   <property name="text">
-    <string>About TerRaNV</string>
-   </property>
-  </action>
-  <action name="actionDraw_line_number_in_error_warning_messages">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Draw line number in error/warning messages</string>
-   </property>
-  </action>
-  <action name="actionApply_deep_validation">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
     <bool>false</bool>
    </property>
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/images/validate_and_save.png</normaloff>:/images/validate_and_save.png</iconset>
+   </property>
    <property name="text">
-    <string>Apply deep validation</string>
+    <string>Save and revalidate</string>
    </property>
   </action>
   <action name="actionClose_file">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
      <normaloff>:/images/close_file.png</normaloff>:/images/close_file.png</iconset>
    </property>
    <property name="text">
     <string>Close file</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/images/save.png</normaloff>:/images/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionValidate">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/images/validate.png</normaloff>:/images/validate.png</iconset>
+   </property>
+   <property name="text">
+    <string>Validate</string>
    </property>
   </action>
  </widget>

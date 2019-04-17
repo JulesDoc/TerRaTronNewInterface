@@ -21,6 +21,7 @@ private:
 	void initializeGUI();
 
 private slots:
+	void activateActions();
 
 private:
 	Ui_TerRaTronNewInterfaceMainWindow *m_ui;

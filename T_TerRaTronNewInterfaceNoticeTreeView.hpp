@@ -5,6 +5,7 @@
 #include <QTreeWidget>
 
 #include "T_NtcElect.hpp"
+#include "T_MessageContainer.hpp"
 
 class T_TerRaTronNewInterfaceNoticeTreeView : public QWidget
 {
@@ -18,4 +19,5 @@ public:
 private:
 	QPointer<QTreeWidget> m_treeWidget;
 	QString m_fileName{};
+	static const QIcon &correspondingIcon(const int& num);
 };

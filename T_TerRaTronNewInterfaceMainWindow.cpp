@@ -24,6 +24,16 @@ void T_TerRaTronNewInterfaceMainWindow::initializeGUI()
 	m_widget = new T_TerRaTronNewInterfaceWidget(this);
 	setCentralWidget(m_widget);
 	connect(m_ui->actionOpen_file, &QAction::triggered, m_widget, &T_TerRaTronNewInterfaceWidget::readFile);
-	
-	m_ui->actionClose_file->setVisible(false);
+	connect(m_widget, &T_TerRaTronNewInterfaceWidget::readFileCompleted, this, &T_TerRaTronNewInterfaceMainWindow::activateActions);
+	connect(m_ui->actionValidate, &QAction::triggered, m_widget, &T_TerRaTronNewInterfaceWidget::validate);
+	connect(m_ui->actionSave, &QAction::triggered, m_widget, &T_TerRaTronNewInterfaceWidget::save);
+	connect(m_ui->actionSave_validate, &QAction::triggered, m_widget, &T_TerRaTronNewInterfaceWidget::saveValidate);
+}
+
+void T_TerRaTronNewInterfaceMainWindow::activateActions()
+{
+	m_ui->actionClose_file->setEnabled(true);
+	m_ui->actionSave->setEnabled(true);
+	m_ui->actionValidate->setEnabled(true);
+	m_ui->actionSave_validate->setEnabled(true);
 }

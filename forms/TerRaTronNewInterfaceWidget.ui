@@ -21,10 +21,60 @@
        <string>File content</string>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="2" column="0">
-        <widget class="CodeEditor" name="fileContent_textEdit"/>
-       </item>
        <item row="1" column="0">
+        <widget class="QLabel" name="labelTextWarning">
+         <property name="palette">
+          <palette>
+           <active>
+            <colorrole role="WindowText">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>255</red>
+               <green>0</green>
+               <blue>0</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </active>
+           <inactive>
+            <colorrole role="WindowText">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>255</red>
+               <green>0</green>
+               <blue>0</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </inactive>
+           <disabled>
+            <colorrole role="WindowText">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>120</red>
+               <green>120</green>
+               <blue>120</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </disabled>
+          </palette>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>File content modified but not saved ...</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::RichText</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
         <widget class="QWidget" name="save_and_revalidate_widget" native="true">
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <property name="leftMargin">
@@ -45,8 +95,8 @@
              <string>Save and revalidate</string>
             </property>
             <property name="icon">
-             <iconset>
-              <normaloff>../resources/validate_and_save.png</normaloff>../resources/validate_and_save.png</iconset>
+             <iconset resource="../resources/resources.qrc">
+              <normaloff>:/images/validate_and_save.png</normaloff>:/images/validate_and_save.png</iconset>
             </property>
            </widget>
           </item>
@@ -84,6 +134,16 @@
            </widget>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="CodeEditor" name="fileContent_textEdit">
+         <property name="frameShadow">
+          <enum>QFrame::Plain</enum>
+         </property>
+         <property name="lineWidth">
+          <number>1</number>
+         </property>
         </widget>
        </item>
        <item row="0" column="0">
@@ -160,7 +220,11 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3">
               <item>
-               <widget class="QTextBrowser" name="errorsWarn_textBrowser"/>
+               <widget class="QTextBrowser" name="errorsWarn_textBrowser">
+                <property name="readOnly">
+                 <bool>false</bool>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -176,8 +240,8 @@
   </layout>
   <action name="actionSave_and_revalidate">
    <property name="icon">
-    <iconset>
-     <normaloff>../resources/validate_and_save.png</normaloff>../resources/validate_and_save.png</iconset>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/images/validate_and_save.png</normaloff>:/images/validate_and_save.png</iconset>
    </property>
    <property name="text">
     <string>Save and revalidate</string>
@@ -233,12 +297,28 @@
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>402</x>
-     <y>105</y>
+     <x>142</x>
+     <y>97</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
      <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fileContent_textEdit</sender>
+   <signal>textChanged()</signal>
+   <receiver>labelTextWarning</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>168</x>
+     <y>429</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>168</x>
+     <y>61</y>
     </hint>
    </hints>
   </connection>
