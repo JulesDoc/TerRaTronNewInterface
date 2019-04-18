@@ -10,8 +10,7 @@
 #include "T_Message.hpp"
 
 T_TerRaTronNewInterfaceWidget::T_TerRaTronNewInterfaceWidget(QWidget *parent)
-	:QWidget(parent),
-	m_dir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation))
+	:QWidget(parent)
 {
 	m_workerThread = new QThread(this);
 	m_worker = new T_TerRaTronNewInterfaceObject(/*this*/); // Orphan object
@@ -21,7 +20,6 @@ T_TerRaTronNewInterfaceWidget::T_TerRaTronNewInterfaceWidget(QWidget *parent)
 	connect(m_worker, &T_TerRaTronNewInterfaceObject::resultReady, this, &T_TerRaTronNewInterfaceWidget::showResult);	
 	
 	m_workerThread->start();
-	
 	initializeGUI();
 }
 
@@ -43,8 +41,15 @@ void T_TerRaTronNewInterfaceWidget::initializeGUI()
 
 	connect(m_ui->actionSave_and_revalidate, &QAction::triggered, this, &T_TerRaTronNewInterfaceWidget::saveValidate);
 	connect(m_ui->autoValidate_checkBox, &QCheckBox::toggled, this, &T_TerRaTronNewInterfaceWidget::autoValidate);
+
+	//Next connect is used to show line number and column everytime the cursor changes its position
 	connect(m_ui->fileContent_textEdit, SIGNAL(cursorPositionChanged()), SLOT(handleCursorPositionChanged()));
+	
+	//Next connect is used to color lines that contain error or warning. 
+	//It signals when cursor is over the errorsWarn_textBrower
 	connect(m_ui->errorsWarn_textBrowser, SIGNAL(cursorPositionChanged()), SLOT(showColoredErrorLines()));
+
+	//connect(m_ui->ntcElectTreeWidget->get_m_treeWidget, SIGNAL(itemClicked()), SLOT(showColoredErrorLines()));
 
 	m_highlighter1 = new T_NtcElectHighlighter(false, m_ui->fileContent_textEdit->document());
 }
@@ -76,6 +81,7 @@ void T_TerRaTronNewInterfaceWidget::saveValidate()
 
 void T_TerRaTronNewInterfaceWidget::autoValidate()
 {
+	//connect or disconnect the automatic validation when text changes
 	if (m_ui->autoValidate_checkBox->isChecked()) {
 		connect(m_ui->fileContent_textEdit, &QPlainTextEdit::textChanged, this, &T_TerRaTronNewInterfaceWidget::validate);
 		validate();
@@ -84,15 +90,20 @@ void T_TerRaTronNewInterfaceWidget::autoValidate()
 	disconnect(m_ui->fileContent_textEdit, &QPlainTextEdit::textChanged, this, &T_TerRaTronNewInterfaceWidget::validate);
 }
 
-void T_TerRaTronNewInterfaceWidget::readFile()
+void T_TerRaTronNewInterfaceWidget::openFile()
 {
-	m_fileName = QFileDialog::getOpenFileName(this, QString(), m_dir.absolutePath(), tr("All files (*.*);;xml (*.xml);;txt (*.txt)"));
+	//Used to store QSetting to remember last folder open
+	const QString DEFAULT_DIR_KEY(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+	QDir currentDir;
 
+	m_fileName = QFileDialog::getOpenFileName(this, QString(), m_settings.value(DEFAULT_DIR_KEY).toString(), tr("All files (*.*);;xml (*.xml);;txt (*.txt)"));
 	if (m_fileName.isEmpty()) return;
-
-	m_dir = QFileInfo(m_fileName).absoluteDir().absolutePath();
 	QFile fileHandler(m_fileName);
 
+	if (m_fileIsOpen) closeFile();
+	
+	//Refresh m_settings with new folder
+	m_settings.setValue(DEFAULT_DIR_KEY, currentDir.absoluteFilePath(m_fileName));
 	if (!fileHandler.open(QIODevice::ReadWrite | QIODevice::Text)) return;
 
 	QTextStream inputStream(&fileHandler);
@@ -104,19 +115,65 @@ void T_TerRaTronNewInterfaceWidget::readFile()
 		fileLine = inputStream.readLine();
 	}
 	m_ui->labelTextWarning->setVisible(false);
-	m_pathFile = m_dir.absoluteFilePath(m_fileName);
+	m_pathFile = currentDir.absoluteFilePath(m_fileName);
 	fileHandler.close();
 
+	/****Validate open file by default*****/
 	validate();
+	/*********/
 
 	Q_EMIT(readFileCompleted());
+	m_fileIsOpen = true;
 	m_ui->autoValidate_checkBox->setDisabled(false);
 	m_ui->save_and_revalidate_button->setDisabled(false);
 }
 
+void T_TerRaTronNewInterfaceWidget::closeFile() 
+{
+	//If user chooses closing file without a previous saving
+	if (m_ui->labelTextWarning->isVisible()) 
+	{
+		QMessageBox msgBox;
+		msgBox.setIcon(QMessageBox::Warning);
+		msgBox.setText("The content of the file has been modified");
+		msgBox.setInformativeText("Do you want to save your changes?");
+		msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+		msgBox.setDefaultButton(QMessageBox::Save);
+		int ret = msgBox.exec();
+		switch (ret) {
+		case QMessageBox::Save:
+			save();
+			break;
+		case QMessageBox::Discard:
+			break;
+		case QMessageBox::Cancel:
+			return;
+			break;
+		default:
+			break;
+		}
+	}
+	T_NtcElect ntc;
+	m_vecErrorsLineNumbers.clear();
+	if (m_ui->autoValidate_checkBox->isChecked())
+		m_ui->autoValidate_checkBox->setChecked(false);
+	m_ui->fileContent_textEdit->clear();
+	m_ui->labelTextWarning->setVisible(false);
+	m_ui->sectionContent_textEdit->clear();
+	m_ui->errorsWarn_textBrowser->clear();
+	m_ui->autoValidate_checkBox->setDisabled(true);
+	m_ui->save_and_revalidate_button->setDisabled(true);
+	//It will clear treeWidget and return
+	m_ui->ntcElectTreeWidget->updateTreeView("", ntc);
+	m_fileIsOpen = false;
+
+	//Signal to mainWindow
+	Q_EMIT(closeFileCompleted());
+}
+
 void T_TerRaTronNewInterfaceWidget::showResult(const T_NtcElect& rcNtcElect)
 {
-	qDebug() << Q_FUNC_INFO;
+	PRECONDITION(rcNtcElect.hasCurrentNoticeIndex());
 	setNtcElect(rcNtcElect);
 	
 	T_String messages;
@@ -136,7 +193,6 @@ void T_TerRaTronNewInterfaceWidget::showResult(const T_NtcElect& rcNtcElect)
 
 void T_TerRaTronNewInterfaceWidget::handleCursorPositionChanged()
 {
-
 	QTextCursor cursor = m_ui->fileContent_textEdit->textCursor();
 
 	const int line = cursor.blockNumber() + 1;
@@ -149,7 +205,6 @@ void T_TerRaTronNewInterfaceWidget::handleCursorPositionChanged()
 void T_TerRaTronNewInterfaceWidget::showColoredErrorLines()
 {
 	moveToFirstErrorLine();
-
 	if (m_NtcElect.getErrorCount() != 0 || m_NtcElect.getWarningCount() != 0) 
 	{
 		QList<QTextEdit::ExtraSelection> extraSelections;
@@ -171,6 +226,7 @@ void T_TerRaTronNewInterfaceWidget::showColoredErrorLines()
 
 void T_TerRaTronNewInterfaceWidget::extractLineNumber()
 {
+	//Extract and push_back errors/warnings line numbers
 	T_String messages;
 	m_NtcElect.getMessagesAsString(messages);
 	std::string str = messages.toStdString();
@@ -202,12 +258,6 @@ void T_TerRaTronNewInterfaceWidget::moveToFirstErrorLine()
 			m_ui->fileContent_textEdit->moveCursor(QTextCursor::Down);
 		}
 	}
-}
-
-void T_TerRaTronNewInterfaceWidget::display(const QString &fileContent)
-{
-	m_ui->fileContent_textEdit->clear();
-	m_ui->fileContent_textEdit->insertPlainText(fileContent);
 }
 
 void T_TerRaTronNewInterfaceWidget::setNtcElect(const T_NtcElect& rcNtcElect)

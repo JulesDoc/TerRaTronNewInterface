@@ -18,31 +18,19 @@ T_TerRaTronNewInterfaceObject::~T_TerRaTronNewInterfaceObject()
 
 void T_TerRaTronNewInterfaceObject::validate(const QString &rcFileContent) 
 {
-	/*Precondition*/
-	Q_ASSERT(!rcFileContent.isEmpty());
-	qDebug() << Q_FUNC_INFO;
-	
+	PRECONDITION(!rcFileContent.isEmpty());
+
 	if (m_apDBBundle.get() == 0)
 	{
 		m_apDBBundle = APT_TronDBBundle(new T_TronDBBundle(T_DBTarget::DEVL, T_DBName::TRS_DB, T_TronContext::ONLINE_VALIDATION));
 	}
 	T_TronParser parser(*m_apDBBundle);
 	T_TronValidator validator(*m_apDBBundle);
+	T_NtcElect rNtcElect;
+		
+	parser.parse(rcFileContent, rNtcElect);
+	validator.validate(rNtcElect);
+	POSTCONDITION(rNtcElect.hasCurrentNoticeIndex());
 
-	//QByteArray fileContentQByte = rcFileContent.toUtf8();
-	//QBuffer buf(&fileContentQByte);
-
-	//bool ok = buf.open(QIODevice::ReadOnly | QIODevice::Text);
-	//if (ok)
-	//{
-		T_NtcElect rNtcElect;
-		//TODO: Change QBuffer to String. Overloaded constructor of parse
-		parser.parse(rcFileContent, rNtcElect);
-		//parser.parse(&buf, rNtcElect, "UTF-8");
-		validator.validate(rNtcElect);
-		//ok = validator.validate(rNtcElect);
-	
-		Q_EMIT resultReady(rNtcElect);
-	//}
-	
+	Q_EMIT resultReady(rNtcElect);
 }

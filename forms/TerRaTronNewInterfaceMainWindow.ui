@@ -91,7 +91,7 @@
      <normaloff>:/images/info.png</normaloff>:/images/info.png</iconset>
    </property>
    <property name="text">
-    <string>About TerRaNV</string>
+    <string>About TerRaTronNewInterface</string>
    </property>
   </action>
   <action name="actionSave_validate">

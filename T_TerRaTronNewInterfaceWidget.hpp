@@ -6,6 +6,7 @@
 #include <QSqlDatabase>
 #include <QPointer>
 #include <QThread>
+#include <QSettings>
 
 #include "T_Database.hpp"
 #include "T_MessageContainer.hpp"
@@ -27,7 +28,6 @@ public:
 private:
 	void initializeGUI();
 	void setNtcElect(const T_NtcElect&);
-	void display(const QString&);
 	void moveToFirstErrorLine();
 	
 
@@ -36,21 +36,24 @@ public slots:
 	void saveValidate();
 	void save();
 	void autoValidate();
-	/******************/
-	void readFile();
+	void closeFile();
+	void openFile();
 	void showResult(const T_NtcElect&);
 	void handleCursorPositionChanged();
 	void extractLineNumber();
 	void showColoredErrorLines();
 	
-	
-
 signals:
+	/*Signals used from widget to mainWindow*/
 	void readFileCompleted();
+	void closeFileCompleted();
 
 private:
 	Ui_TerRaTronNewInterfaceWidget *m_ui;
 	T_NtcElect m_NtcElect;
+	QSettings m_settings;
+	bool m_fileIsOpen;
+	
 	QPointer<T_NtcElectHighlighter> m_highlighter1;
 	QPointer<T_TerRaTronNewInterfaceObject> m_worker;
 	QPointer<QThread> m_workerThread;
@@ -59,6 +62,4 @@ private:
 
 	QString m_pathFile{};
 	QString m_fileName{};
-
-	QDir m_dir;
 };

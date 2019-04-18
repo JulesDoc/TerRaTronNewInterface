@@ -6,6 +6,8 @@
 int main(int argc, char *argv[])
 {
 	QApplication app(argc, argv);
+	app.setOrganizationName("ITU");
+	app.setApplicationName("TerRaTronNewInterface");
 	
 	qRegisterMetaType<T_NtcElect>("T_NtcElect");
 

@@ -18,6 +18,7 @@ public slots:
 	void validate(const QString &);
 
 signals:
+	/*Emited when validation finishes*/
 	void resultReady(const T_NtcElect&);
 
 private:

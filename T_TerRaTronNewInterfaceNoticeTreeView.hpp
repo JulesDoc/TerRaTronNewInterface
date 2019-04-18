@@ -14,7 +14,10 @@ class T_TerRaTronNewInterfaceNoticeTreeView : public QWidget
 public:
 	T_TerRaTronNewInterfaceNoticeTreeView(QWidget *parent = 0);
 	~T_TerRaTronNewInterfaceNoticeTreeView();
-	void updateTreeView(QString, const T_NtcElect&);
+	void updateTreeView(QString fn, const T_NtcElect&);
+	QPointer<QTreeWidget> get_m_treeWidget() {
+		return m_treeWidget;
+	}
 
 private:
 	QPointer<QTreeWidget> m_treeWidget;

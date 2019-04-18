@@ -23,6 +23,11 @@ T_TerRaTronNewInterfaceNoticeTreeView::~T_TerRaTronNewInterfaceNoticeTreeView()
 void T_TerRaTronNewInterfaceNoticeTreeView::updateTreeView(QString fileName, const T_NtcElect& rcNtcElect)
 {
 	m_treeWidget->clear();
+	//updating with an empty file means clear and return
+	if (fileName.isEmpty()) return;
+
+	PRECONDITION(rcNtcElect.hasCurrentNoticeIndex());
+
 	m_treeWidget->setColumnCount(1);
 	const int indexNoticeCount = rcNtcElect.getNoticeSectionCount();
 	for (int i = 0; i < indexNoticeCount; ++i) {
