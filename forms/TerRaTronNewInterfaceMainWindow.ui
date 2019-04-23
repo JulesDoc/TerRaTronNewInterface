@@ -37,12 +37,13 @@
     <addaction name="separator"/>
     <addaction name="actionSave"/>
     <addaction name="actionValidate"/>
+    <addaction name="actionShow_Auto_validate_checkBox"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionAbout_TerRaNV"/>
+    <addaction name="actionAbout_TerRaTronNewInterface"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
@@ -85,7 +86,7 @@
     <string>Quit</string>
    </property>
   </action>
-  <action name="actionAbout_TerRaNV">
+  <action name="actionAbout_TerRaTronNewInterface">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
      <normaloff>:/images/info.png</normaloff>:/images/info.png</iconset>
@@ -148,6 +149,14 @@
     <string>Validate</string>
    </property>
   </action>
+  <action name="actionShow_Auto_validate_checkBox">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Show/Hide Auto validate checkBox</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../resources/resources.qrc"/>
@@ -165,7 +174,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>399</x>
-     <y>299</y>
+     <y>295</y>
     </hint>
    </hints>
   </connection>

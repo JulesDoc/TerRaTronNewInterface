@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QPointer>
 #include <QVBoxLayout>
+#include <QMessageBox>
 
 #include "T_TerRaTronNewInterfaceNoticeTreeView.hpp"
 
@@ -26,12 +27,8 @@ void T_TerRaTronNewInterfaceNoticeTreeView::updateTreeView(QString fileName, con
 	//updating with an empty file means clear and return
 	if (fileName.isEmpty()) return;
 
-	PRECONDITION(rcNtcElect.hasCurrentNoticeIndex());
-
 	m_treeWidget->setColumnCount(1);
-	const int indexNoticeCount = rcNtcElect.getNoticeSectionCount();
-	for (int i = 0; i < indexNoticeCount; ++i) {
-
+	
 		QTreeWidgetItem *parentItem = new QTreeWidgetItem(m_treeWidget);
 		parentItem->setText(0, fileName);
 		parentItem->setToolTip(0, QDir::toNativeSeparators(fileName));
@@ -50,8 +47,11 @@ void T_TerRaTronNewInterfaceNoticeTreeView::updateTreeView(QString fileName, con
 		headItemWarnings->setText(0, tr("Head Warnings: %1").arg(rcNtcElect.getHeadSection().getWarningCount()));
 		headItemSection->addChild(headItemWarnings);
 
+	const int indexNoticeCount = rcNtcElect.getNoticeSectionCount();
+	for (int i = 0; i < indexNoticeCount; ++i) {
+		
 		QTreeWidgetItem *noticeItemSection = new QTreeWidgetItem(parentItem);
-		noticeItemSection->setText(0, tr("Notice %1").arg(indexNoticeCount));
+		noticeItemSection->setText(0, tr("Notice %1").arg(i+1));
 		parentItem->addChild(noticeItemSection);
 		noticeItemSection->setIcon(0, correspondingIcon(rcNtcElect.getNoticeSectionAt(i).getErrorCount()));
 

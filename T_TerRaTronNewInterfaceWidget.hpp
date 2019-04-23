@@ -29,6 +29,7 @@ private:
 	void initializeGUI();
 	void setNtcElect(const T_NtcElect&);
 	void moveToFirstErrorLine();
+	QSharedPointer<QMessageBox> infoMessageFactory(const char*);
 	
 
 public slots:
@@ -36,7 +37,9 @@ public slots:
 	void saveValidate();
 	void save();
 	void autoValidate();
+	void showHide();
 	void closeFile();
+	void dialogSaveFile();
 	void openFile();
 	void showResult(const T_NtcElect&);
 	void handleCursorPositionChanged();

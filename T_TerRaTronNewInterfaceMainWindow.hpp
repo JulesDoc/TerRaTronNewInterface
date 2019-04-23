@@ -19,12 +19,14 @@ public:
 
 private:
 	void initializeGUI();
+	void closeEvent(QCloseEvent*);
 
 private slots:
 	/*Enable and disable StatusBar icons and options in Options*/
 	/*If no file open -> all disable*/
 	void activateActions();
 	void deActivateActions();
+	void close();
 
 private:
 	Ui_TerRaTronNewInterfaceMainWindow *m_ui;

@@ -1,5 +1,6 @@
 
-#include <sstream> 
+#include <sstream>
+#include <QSignalSpy>
 
 #include "T_TerRaTronNewInterfaceObject.hpp"
 #include "T_TerRaTronNewInterfaceWidget.hpp"
@@ -38,6 +39,7 @@ void T_TerRaTronNewInterfaceWidget::initializeGUI()
 	m_ui->autoValidate_checkBox->setDisabled(true);
 	m_ui->save_and_revalidate_button->setDisabled(true);
 	m_ui->labelTextWarning->setVisible(false);
+	m_ui->autoValidate_checkBox->setVisible(false);
 
 	connect(m_ui->actionSave_and_revalidate, &QAction::triggered, this, &T_TerRaTronNewInterfaceWidget::saveValidate);
 	connect(m_ui->autoValidate_checkBox, &QCheckBox::toggled, this, &T_TerRaTronNewInterfaceWidget::autoValidate);
@@ -49,7 +51,7 @@ void T_TerRaTronNewInterfaceWidget::initializeGUI()
 	//It signals when cursor is over the errorsWarn_textBrower
 	connect(m_ui->errorsWarn_textBrowser, SIGNAL(cursorPositionChanged()), SLOT(showColoredErrorLines()));
 
-	//connect(m_ui->ntcElectTreeWidget->get_m_treeWidget, SIGNAL(itemClicked()), SLOT(showColoredErrorLines()));
+	
 
 	m_highlighter1 = new T_NtcElectHighlighter(false, m_ui->fileContent_textEdit->document());
 }
@@ -57,7 +59,10 @@ void T_TerRaTronNewInterfaceWidget::initializeGUI()
 void T_TerRaTronNewInterfaceWidget::validate()
 {
 	const QSignalBlocker blocker(this);
+	auto pMessageBox = infoMessageFactory("Validating notices, please wait");
+	QSignalSpy spy(m_worker, SIGNAL(resultReady));
 	QMetaObject::invokeMethod(m_worker, "validate", Q_ARG(QString, m_ui->fileContent_textEdit->toPlainText()));
+	while (spy.count() != 0) {}
 }
 
 void T_TerRaTronNewInterfaceWidget::save()
@@ -78,7 +83,19 @@ void T_TerRaTronNewInterfaceWidget::saveValidate()
 	save();
 	validate();
 }
-
+void T_TerRaTronNewInterfaceWidget::showHide()
+{
+	if (!m_ui->autoValidate_checkBox->isVisible()) {
+		m_ui->autoValidate_checkBox->setVisible(true);
+		return;
+	}
+	if (m_ui->autoValidate_checkBox->isVisible()) {
+		if (m_ui->autoValidate_checkBox->isChecked())
+			m_ui->autoValidate_checkBox->setChecked(false);
+		m_ui->autoValidate_checkBox->setVisible(false);
+		return;
+	}
+}
 void T_TerRaTronNewInterfaceWidget::autoValidate()
 {
 	//connect or disconnect the automatic validation when text changes
@@ -102,6 +119,8 @@ void T_TerRaTronNewInterfaceWidget::openFile()
 
 	if (m_fileIsOpen) closeFile();
 	
+	auto pMessageBox = infoMessageFactory("Reading file, please wait");
+
 	//Refresh m_settings with new folder
 	m_settings.setValue(DEFAULT_DIR_KEY, currentDir.absoluteFilePath(m_fileName));
 	if (!fileHandler.open(QIODevice::ReadWrite | QIODevice::Text)) return;
@@ -114,24 +133,20 @@ void T_TerRaTronNewInterfaceWidget::openFile()
 		m_ui->fileContent_textEdit->appendPlainText(fileLine);
 		fileLine = inputStream.readLine();
 	}
+	
+
 	m_ui->labelTextWarning->setVisible(false);
 	m_pathFile = currentDir.absoluteFilePath(m_fileName);
 	fileHandler.close();
-
-	/****Validate open file by default*****/
+	/****Validate when openinig file, by default*****/
 	validate();
 	/*********/
-
-	Q_EMIT(readFileCompleted());
 	m_fileIsOpen = true;
-	m_ui->autoValidate_checkBox->setDisabled(false);
-	m_ui->save_and_revalidate_button->setDisabled(false);
 }
-
-void T_TerRaTronNewInterfaceWidget::closeFile() 
+void T_TerRaTronNewInterfaceWidget::dialogSaveFile()
 {
 	//If user chooses closing file without a previous saving
-	if (m_ui->labelTextWarning->isVisible()) 
+	if (m_ui->labelTextWarning->isVisible())
 	{
 		QMessageBox msgBox;
 		msgBox.setIcon(QMessageBox::Warning);
@@ -153,6 +168,12 @@ void T_TerRaTronNewInterfaceWidget::closeFile()
 			break;
 		}
 	}
+}
+
+void T_TerRaTronNewInterfaceWidget::closeFile() 
+{
+	dialogSaveFile();
+
 	T_NtcElect ntc;
 	m_vecErrorsLineNumbers.clear();
 	if (m_ui->autoValidate_checkBox->isChecked())
@@ -163,6 +184,7 @@ void T_TerRaTronNewInterfaceWidget::closeFile()
 	m_ui->errorsWarn_textBrowser->clear();
 	m_ui->autoValidate_checkBox->setDisabled(true);
 	m_ui->save_and_revalidate_button->setDisabled(true);
+
 	//It will clear treeWidget and return
 	m_ui->ntcElectTreeWidget->updateTreeView("", ntc);
 	m_fileIsOpen = false;
@@ -173,7 +195,8 @@ void T_TerRaTronNewInterfaceWidget::closeFile()
 
 void T_TerRaTronNewInterfaceWidget::showResult(const T_NtcElect& rcNtcElect)
 {
-	PRECONDITION(rcNtcElect.hasCurrentNoticeIndex());
+	auto pMessageBox = infoMessageFactory("Showing results, please wait");
+	
 	setNtcElect(rcNtcElect);
 	
 	T_String messages;
@@ -187,8 +210,12 @@ void T_TerRaTronNewInterfaceWidget::showResult(const T_NtcElect& rcNtcElect)
 	m_ui->sectionContent_textEdit->insertPlainText(QString("Total number of warnings: %1 \n").arg(rcNtcElect.getWarningCount()));
     m_ui->errorsWarn_textBrowser->insertPlainText(messages);
 	m_ui->ntcElectTreeWidget->updateTreeView(m_fileName, rcNtcElect);
+
 	extractLineNumber();
 	showColoredErrorLines();
+	m_ui->autoValidate_checkBox->setDisabled(false);
+	m_ui->save_and_revalidate_button->setDisabled(false);
+	Q_EMIT(readFileCompleted());
 }
 
 void T_TerRaTronNewInterfaceWidget::handleCursorPositionChanged()
@@ -263,4 +290,17 @@ void T_TerRaTronNewInterfaceWidget::moveToFirstErrorLine()
 void T_TerRaTronNewInterfaceWidget::setNtcElect(const T_NtcElect& rcNtcElect)
 {
 	m_NtcElect = rcNtcElect;
+}
+
+QSharedPointer<QMessageBox> T_TerRaTronNewInterfaceWidget::infoMessageFactory(const char* cStr) {
+
+	QSharedPointer<QMessageBox> msgBox(new QMessageBox);
+	msgBox->setIcon(QMessageBox::Information);
+	msgBox->setText("System is busy, task in progress");
+	msgBox->setStandardButtons(0);
+	msgBox->setInformativeText(cStr);
+	msgBox->show();
+	QCoreApplication::processEvents();
+
+	return msgBox;
 }

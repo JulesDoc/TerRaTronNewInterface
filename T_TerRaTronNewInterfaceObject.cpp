@@ -1,4 +1,6 @@
 #include <QBuffer>
+#include <QMessageBox>
+#include <QCoreApplication>
 
 #include "T_TerRaTronNewInterfaceObject.hpp"
 #include "T_TronParser.hpp"
@@ -30,7 +32,6 @@ void T_TerRaTronNewInterfaceObject::validate(const QString &rcFileContent)
 		
 	parser.parse(rcFileContent, rNtcElect);
 	validator.validate(rNtcElect);
-	POSTCONDITION(rNtcElect.hasCurrentNoticeIndex());
-
+	
 	Q_EMIT resultReady(rNtcElect);
 }

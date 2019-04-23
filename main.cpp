@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 	
 	qRegisterMetaType<T_NtcElect>("T_NtcElect");
 
-	//TODO: Get hardcoded parameters from config file
+	//TODO: Get hardcoded parameters from config file: QSettings
 	T_DBTarget aDBTarget(T_DBTarget::DEVL);
 	T_Database db(T_DBName::TRS_DB, aDBTarget);
 	T_String text; text << db.getConnectionInfo();

@@ -30,6 +30,7 @@ void T_TerRaTronNewInterfaceMainWindow::initializeGUI()
 	connect(m_ui->actionSave, &QAction::triggered, m_widget, &T_TerRaTronNewInterfaceWidget::save);
 	connect(m_ui->actionSave_validate, &QAction::triggered, m_widget, &T_TerRaTronNewInterfaceWidget::saveValidate);
 	connect(m_ui->actionClose_file, &QAction::triggered, m_widget, &T_TerRaTronNewInterfaceWidget::closeFile);
+	connect(m_ui->actionShow_Auto_validate_checkBox, &QAction::triggered, m_widget, &T_TerRaTronNewInterfaceWidget::showHide);
 }
 
 //Activate elements in the statusBar when a file is open
@@ -39,6 +40,7 @@ void T_TerRaTronNewInterfaceMainWindow::activateActions()
 	m_ui->actionSave->setEnabled(true);
 	m_ui->actionValidate->setEnabled(true);
 	m_ui->actionSave_validate->setEnabled(true);
+	m_ui->actionShow_Auto_validate_checkBox->setEnabled(true);
 }
 //Deactivate elements in the statusBar when there is no file open
 void T_TerRaTronNewInterfaceMainWindow::deActivateActions()
@@ -47,4 +49,17 @@ void T_TerRaTronNewInterfaceMainWindow::deActivateActions()
 	m_ui->actionSave->setEnabled(false);
 	m_ui->actionValidate->setEnabled(false);
 	m_ui->actionSave_validate->setEnabled(false);
+	m_ui->actionShow_Auto_validate_checkBox->setEnabled(false);
+}
+
+void T_TerRaTronNewInterfaceMainWindow::closeEvent(QCloseEvent* cEvent)
+{
+	m_widget->dialogSaveFile();
+	cEvent->accept();
+}
+
+void T_TerRaTronNewInterfaceMainWindow::close() 
+{
+	m_widget->dialogSaveFile();
+	QApplication::quit();
 }
