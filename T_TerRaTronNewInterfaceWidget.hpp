@@ -1,16 +1,11 @@
 #pragma once
-//TODO: Study headers dependencies
+
 #include <QWidget>
 #include <QVector>
-#include <QSqlRecord>
-#include <QSqlDatabase>
 #include <QPointer>
 #include <QThread>
 #include <QSettings>
 
-#include "T_Database.hpp"
-#include "T_MessageContainer.hpp"
-#include "T_TronDBBundle.hpp"
 #include "T_TerRaTronNewInterfaceObject.hpp"
 #include "T_TerRaTronNewInterfaceNoticeTreeView.hpp"
 #include "T_NtcElectHighlighter.hpp"
@@ -22,15 +17,23 @@ class T_TerRaTronNewInterfaceWidget : public QWidget
 	Q_OBJECT
 
 public:
-	T_TerRaTronNewInterfaceWidget(QWidget *parent = 0);
+	T_TerRaTronNewInterfaceWidget(QWidget *parent = nullptr);
 	virtual ~T_TerRaTronNewInterfaceWidget();
 	
 private:
 	void initializeGUI();
-	void setNtcElect(const T_NtcElect&);
-	void moveToFirstErrorLine();
-	QSharedPointer<QMessageBox> infoMessageFactory(const char*);
 	
+public:
+	void dialogSaveFile();
+	void setNtcElect(const T_NtcElect&);
+	void showCursorPosition();
+	void coloredErrorLines();
+	void clearResetAll();
+	void infoMessageOnFlyFactory(const char* msg, const QColor &);
+	void extractErrorLineNumber(const QString&);
+	void moveToErrorLine(int);
+	void launchProgressBar();
+
 
 public slots:
 	void validate();
@@ -39,24 +42,27 @@ public slots:
 	void autoValidate();
 	void showHide();
 	void closeFile();
-	void dialogSaveFile();
 	void openFile();
 	void showResult(const T_NtcElect&);
 	void handleCursorPositionChanged();
-	void extractLineNumber();
-	void showColoredErrorLines();
-	
+	void onAnchorClicked(const QUrl &link);
+
 signals:
-	/*Signals used from widget to mainWindow*/
-	void readFileCompleted();
+	/*Signals sent from widget to mainWindow
+	in order to activate/deactivate tool bar*/
+	void readValidateFileCompleted();
 	void closeFileCompleted();
+	void disableWindowsInMain();
 
 private:
 	Ui_TerRaTronNewInterfaceWidget *m_ui;
 	T_NtcElect m_NtcElect;
+	T_String m_NoticeMessages;
 	QSettings m_settings;
-	bool m_fileIsOpen;
-	
+	bool m_fileIsOpen = false;
+	bool m_inValidation = false;
+	int m_OnCLickLinkErrorNumber{};
+
 	QPointer<T_NtcElectHighlighter> m_highlighter1;
 	QPointer<T_TerRaTronNewInterfaceObject> m_worker;
 	QPointer<QThread> m_workerThread;

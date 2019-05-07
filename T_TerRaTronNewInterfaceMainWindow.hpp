@@ -12,21 +12,21 @@ class T_TerRaTronNewInterfaceWidget;
 class T_TerRaTronNewInterfaceMainWindow : public QMainWindow
 {
 	Q_OBJECT
-public:
 
-	T_TerRaTronNewInterfaceMainWindow(RT_Database rDatabase, QWidget *parent = 0);
+public:
+	T_TerRaTronNewInterfaceMainWindow(RT_Database rDatabase, QWidget *parent = nullptr);
 	virtual ~T_TerRaTronNewInterfaceMainWindow();
 
 private:
 	void initializeGUI();
-	void closeEvent(QCloseEvent*);
-
-private slots:
+	
+public slots:
 	/*Enable and disable StatusBar icons and options in Options*/
 	/*If no file open -> all disable*/
 	void activateActions();
 	void deActivateActions();
 	void close();
+	void closeEvent(QCloseEvent*);
 
 private:
 	Ui_TerRaTronNewInterfaceMainWindow *m_ui;

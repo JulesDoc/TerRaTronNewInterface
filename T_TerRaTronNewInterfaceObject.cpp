@@ -1,6 +1,3 @@
-#include <QBuffer>
-#include <QMessageBox>
-#include <QCoreApplication>
 
 #include "T_TerRaTronNewInterfaceObject.hpp"
 #include "T_TronParser.hpp"
@@ -10,8 +7,6 @@
 
 T_TerRaTronNewInterfaceObject::T_TerRaTronNewInterfaceObject()
 {
-	qRegisterMetaType<T_TronMessageContainer>("T_TronMessageContainer");
-	qRegisterMetaType<T_String>("T_String");
 }
 
 T_TerRaTronNewInterfaceObject::~T_TerRaTronNewInterfaceObject()
@@ -33,5 +28,7 @@ void T_TerRaTronNewInterfaceObject::validate(const QString &rcFileContent)
 	parser.parse(rcFileContent, rNtcElect);
 	validator.validate(rNtcElect);
 	
+	POSTCONDITION(!rNtcElect.isUnknown());
+	//Signal emitted to Widget to start showing results
 	Q_EMIT resultReady(rNtcElect);
 }

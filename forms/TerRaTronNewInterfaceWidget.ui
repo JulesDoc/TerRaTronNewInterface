@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>970</width>
-    <height>774</height>
+    <width>911</width>
+    <height>904</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -21,56 +21,13 @@
        <string>File content</string>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="1" column="0">
-        <widget class="QLabel" name="labelTextWarning">
-         <property name="palette">
-          <palette>
-           <active>
-            <colorrole role="WindowText">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>255</red>
-               <green>0</green>
-               <blue>0</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </active>
-           <inactive>
-            <colorrole role="WindowText">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>255</red>
-               <green>0</green>
-               <blue>0</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </inactive>
-           <disabled>
-            <colorrole role="WindowText">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>120</red>
-               <green>120</green>
-               <blue>120</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </disabled>
-          </palette>
-         </property>
-         <property name="font">
-          <font>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="autoValidate_checkBox">
          <property name="text">
-          <string>File content modified but not saved ...</string>
+          <string>Auto validate</string>
          </property>
-         <property name="textFormat">
-          <enum>Qt::RichText</enum>
+         <property name="checked">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -136,6 +93,59 @@
          </layout>
         </widget>
        </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="labelTextWarning">
+         <property name="palette">
+          <palette>
+           <active>
+            <colorrole role="WindowText">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>255</red>
+               <green>0</green>
+               <blue>0</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </active>
+           <inactive>
+            <colorrole role="WindowText">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>255</red>
+               <green>0</green>
+               <blue>0</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </inactive>
+           <disabled>
+            <colorrole role="WindowText">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>120</red>
+               <green>120</green>
+               <blue>120</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </disabled>
+          </palette>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>File content modified but not saved ...</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::RichText</enum>
+         </property>
+        </widget>
+       </item>
        <item row="3" column="0">
         <widget class="CodeEditor" name="fileContent_textEdit">
          <property name="frameShadow">
@@ -146,16 +156,6 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="autoValidate_checkBox">
-         <property name="text">
-          <string>Auto validate</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
      <widget class="QGroupBox" name="groupBox_2">
@@ -163,6 +163,19 @@
        <string>Parse information</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QProgressBar" name="progressBar">
+         <property name="value">
+          <number>0</number>
+         </property>
+         <property name="textVisible">
+          <bool>true</bool>
+         </property>
+         <property name="format">
+          <string>%p%</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QSplitter" name="splitter">
          <property name="orientation">
@@ -202,7 +215,11 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_7">
               <item>
-               <widget class="QTextBrowser" name="sectionContent_textEdit"/>
+               <widget class="QTextBrowser" name="sectionContent_textEdit">
+                <property name="openLinks">
+                 <bool>false</bool>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -222,6 +239,15 @@
               <item>
                <widget class="QTextBrowser" name="errorsWarn_textBrowser">
                 <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+                <property name="textInteractionFlags">
+                 <set>Qt::TextBrowserInteraction</set>
+                </property>
+                <property name="openExternalLinks">
+                 <bool>false</bool>
+                </property>
+                <property name="openLinks">
                  <bool>false</bool>
                 </property>
                </widget>
@@ -248,16 +274,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
-   </property>
-  </action>
-  <action name="actionOpen_containing_folder">
-   <property name="text">
-    <string>Open containing folder</string>
-   </property>
-  </action>
-  <action name="actionView_file">
-   <property name="text">
-    <string>View file</string>
    </property>
   </action>
   <action name="actionOpen_file">
