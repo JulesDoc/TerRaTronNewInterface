@@ -2,7 +2,7 @@
 include(../terrasys.pri)
 
 DEFINES += 
-QT += widgets network sql xml testlib
+QT += widgets network sql xml testlib concurrent
  
 SOURCES += \
 	main.cpp \

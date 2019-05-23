@@ -2,14 +2,18 @@
 #include <QSignalSpy>
 #include <QMessageBox>
 #include <QCoreApplication>
+#include <QtConcurrent>
+#include <QFuture>
 #include <algorithm>
 #include <regex>
 
 #include "T_Configuration.hpp"
-#include "Ui_TerRaTronNewInterfaceWidget.h"
+#include "ui_TerRaTronNewInterfaceWidget.h"
 #include "T_TerRaTronNewInterfaceWidget.hpp"
 #include "codeeditor.h"
 #include "T_Message.hpp"
+
+
 
 T_TerRaTronNewInterfaceWidget::T_TerRaTronNewInterfaceWidget(QWidget *parent)
 	:QWidget(parent)
@@ -58,11 +62,6 @@ void T_TerRaTronNewInterfaceWidget::openFile()
 	if (m_fileName.isEmpty()) return;
 	if (m_fileIsOpen) closeFile();
 
-	infoMessageOnFlyFactory("Opening file, please wait ...", Qt::darkBlue);
-	launchProgressBar();
-	QCoreApplication::processEvents();
-
-	//Refresh settingsPath (QSettings member) with new path
 	T_Configuration::setSettingsPath(currentDir.absoluteFilePath(m_fileName));
 
 	QFile fileHandler(m_fileName);
@@ -73,22 +72,20 @@ void T_TerRaTronNewInterfaceWidget::openFile()
 	m_ui->labelTextWarning->setVisible(false);
 	m_pathFile = currentDir.absoluteFilePath(m_fileName);
 	fileHandler.close();
-	/****Validate when opening file, by default*****/
-	validate();
-	/*********/
+	
+	m_ui->save_and_revalidate_button->setDisabled(false);
+	Q_EMIT(readValidateFileCompleted());
 }
 
 void T_TerRaTronNewInterfaceWidget::validate()
 {
 	launchProgressBar();
+	m_inValidation = true;
 	m_ui->save_and_revalidate_button->setDisabled(true);
 	Q_EMIT(disableWindowsInMain());
 	m_ui->progressBar->setValue(10);
 	infoMessageOnFlyFactory("Validating notices, please wait ...", Qt::darkBlue);
-	//m_ui->progressBar->setValue(40);
-	QCoreApplication::processEvents();
 	//System is in Validation. Useful for big number of notices.
-	m_inValidation = true;
 	qRegisterMetaType<T_NtcElect>();
 	QSignalSpy spy(m_worker, SIGNAL(resultReady(const T_NtcElect&)));
 	QMetaObject::invokeMethod(m_worker, "validate", Q_ARG(QString, m_ui->fileContent_textEdit->toPlainText()));
@@ -142,7 +139,6 @@ void T_TerRaTronNewInterfaceWidget::showResult(const T_NtcElect& rcNtcElect)
 	m_ui->sectionContent_textEdit->insertPlainText(QString("Total number of errors: %1 \n").arg(m_NtcElect.getErrorCount()));
 	m_ui->sectionContent_textEdit->insertPlainText(QString("Total number of warnings: %1 \n").arg(m_NtcElect.getWarningCount()));
 	m_ui->progressBar->setValue(95);
-	QCoreApplication::processEvents();
 
 	//Showing notices error messages in different lines of Html code
 	//Dealing with a bunch of chars inside messages of NtcElect
@@ -222,7 +218,7 @@ void T_TerRaTronNewInterfaceWidget::closeFile()
 	dialogSaveFile();
 	clearResetAll();
 	//Signal to mainWindow in order to deactivate actions / tool bar
-	Q_EMIT(closeFileCompleted());
+	Q_EMIT(disableWindowsInMain());
 }
 
 void T_TerRaTronNewInterfaceWidget::handleCursorPositionChanged()

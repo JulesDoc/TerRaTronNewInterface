@@ -9,6 +9,7 @@
 int main(int argc, char *argv[])
 {
 	QApplication app(argc, argv);
+	
 	T_Configuration::loadSettings();
 
 	qRegisterMetaType<T_NtcElect>("T_NtcElect");

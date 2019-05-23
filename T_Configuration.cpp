@@ -1,10 +1,8 @@
 
 #include <QStandardPaths>
-
 #include "T_Configuration.hpp"
 
-
-QSettings T_Configuration::settings("configFileNewTerRaTron", QSettings::IniFormat);
+QSettings T_Configuration::settings("configFileNewTerRaTron.ini", QSettings::IniFormat);
 
 int T_Configuration::settingsDBTargetInt{};
 T_DBTarget::tagDBTarget T_Configuration::settingsDBTargetToEnum{};
@@ -13,7 +11,6 @@ int T_Configuration::settingsDBNameInt{};
 RCT_DBName T_Configuration::settingsDBNameToEnum{ T_DBName::TRS_DB };
 
 QString T_Configuration::settingsPath{};
-
 
 T_Configuration::T_Configuration()
 {
@@ -38,7 +35,6 @@ void T_Configuration::loadSettings()
 	settings.beginGroup("General");
 	settingsDBTargetInt = settings.value("dbTarget", T_DBTarget::DEVL).toInt();
 	settingsDBTargetToEnum = static_cast<T_DBTarget::tagDBTarget>(settingsDBTargetInt);
-	//settingsDBNameInt = settings.value("dbName", T_DBName::TRS_DB).toInt();
 	settingsPath = settings.value("defaultPathToOpenFile", QStandardPaths::writableLocation
 							     (QStandardPaths::DocumentsLocation)).toString();
 	settings.endGroup();

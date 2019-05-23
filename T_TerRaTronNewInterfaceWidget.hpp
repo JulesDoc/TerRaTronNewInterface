@@ -51,7 +51,6 @@ signals:
 	/*Signals sent from widget to mainWindow
 	in order to activate/deactivate tool bar*/
 	void readValidateFileCompleted();
-	void closeFileCompleted();
 	void disableWindowsInMain();
 
 private:
