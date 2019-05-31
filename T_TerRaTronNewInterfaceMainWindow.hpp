@@ -26,6 +26,7 @@ public slots:
 	void activateActions();
 	void deActivateActions();
 	void close();
+	void help();
 	void closeEvent(QCloseEvent*);
 
 private:

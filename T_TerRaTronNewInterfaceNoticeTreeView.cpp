@@ -19,11 +19,6 @@ void T_TerRaTronNewInterfaceNoticeTreeView::initializeGUI()
 	m_ui->setupUi(this);
 }
 
-T_TerRaTronNewInterfaceNoticeTreeView::~T_TerRaTronNewInterfaceNoticeTreeView()
-{
-
-}
-
 void T_TerRaTronNewInterfaceNoticeTreeView::updateTreeView(QString fileName, const T_NtcElect& rcNtcElect)
 {
 	m_ui->treeWidget->clear();
@@ -31,7 +26,6 @@ void T_TerRaTronNewInterfaceNoticeTreeView::updateTreeView(QString fileName, con
 	if (fileName.isEmpty()) return;
 
 	PRECONDITION(!rcNtcElect.isUnknown());
-
 	bool allClean = true;
 	QFont parentFont("Times", 10, QFont::Bold);
 	QFont headFont("Times", 9, QFont::Bold);
@@ -52,7 +46,8 @@ void T_TerRaTronNewInterfaceNoticeTreeView::updateTreeView(QString fileName, con
 		QTreeWidgetItem *headItemErrors = new QTreeWidgetItem(headItemSection);
 		headItemErrors->setText(0, tr("Head Errors: %1").arg(rcNtcElect.getHeadSection().getErrorCount()));
 		headItemSection->addChild(headItemErrors);
-		headItemSection->setIcon(0, correspondingIcon(rcNtcElect.getHeadSection().getErrorCount()));
+		headItemSection->setIcon(0, correspondingIcon(rcNtcElect.getHeadSection().getErrorCount(), 
+													  rcNtcElect.getHeadSection().getWarningCount()));
 
 		QTreeWidgetItem *headItemWarnings = new QTreeWidgetItem(headItemSection);
 		headItemWarnings->setText(0, tr("Head Warnings: %1").arg(rcNtcElect.getHeadSection().getWarningCount()));
@@ -72,7 +67,8 @@ void T_TerRaTronNewInterfaceNoticeTreeView::updateTreeView(QString fileName, con
 			noticeItemSection->setText(0, tr("Notice %1").arg(i + 1));
 			parentItem->addChild(noticeItemSection);
 			noticeItemSection->setFont(0, noticeFont);
-			noticeItemSection->setIcon(0, correspondingIcon(rcNtcElect.getNoticeSectionAt(i).getErrorCount()));
+			noticeItemSection->setIcon(0, correspondingIcon(rcNtcElect.getNoticeSectionAt(i).getErrorCount(), 
+															rcNtcElect.getNoticeSectionAt(i).getWarningCount()));
 
 			QTreeWidgetItem *noticeItemErrors = new QTreeWidgetItem(noticeItemSection);
 			noticeItemErrors->setText(0, tr("Notice Errors: %1").arg(rcNtcElect.getNoticeSectionAt(i).getErrorCount()));
@@ -81,6 +77,7 @@ void T_TerRaTronNewInterfaceNoticeTreeView::updateTreeView(QString fileName, con
 			QTreeWidgetItem *noticeItemWarnings = new QTreeWidgetItem(noticeItemSection);
 			noticeItemWarnings->setText(0, tr("Notice Warnings: %1").arg(rcNtcElect.getNoticeSectionAt(i).getWarningCount()));
 			noticeItemSection->addChild(noticeItemWarnings);
+
 			m_ui->treeWidget->expandItem(parentItem);
 			m_ui->treeWidget->expandItem(noticeItemSection);
 		}
@@ -98,15 +95,16 @@ void T_TerRaTronNewInterfaceNoticeTreeView::updateTreeView(QString fileName, con
 
 }
 
-const QIcon &T_TerRaTronNewInterfaceNoticeTreeView::correspondingIcon(const int& num)
+const QIcon &T_TerRaTronNewInterfaceNoticeTreeView::correspondingIcon(const int& numErr, const int& numWar)
 {
 	static QIcon okIcon = QIcon(QString::fromLatin1(":/images/ok.png"));
 	static QIcon warningIcon = QIcon(QString::fromLatin1(":/images/qmessagebox-warn.png"));
 	static QIcon errorIcon = QIcon(QString::fromLatin1(":/images/qmessagebox-crit.png"));
 
-	if (num > 0)
+	if (numErr > 0)
 		return errorIcon;
-	else if (num > 0)
+	else if (numErr == 0 && numWar > 0)
 		return warningIcon;
 	return okIcon;
 }
+

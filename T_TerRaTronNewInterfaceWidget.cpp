@@ -2,8 +2,6 @@
 #include <QSignalSpy>
 #include <QMessageBox>
 #include <QCoreApplication>
-#include <QtConcurrent>
-#include <QFuture>
 #include <algorithm>
 #include <regex>
 
@@ -12,8 +10,6 @@
 #include "T_TerRaTronNewInterfaceWidget.hpp"
 #include "codeeditor.h"
 #include "T_Message.hpp"
-
-
 
 T_TerRaTronNewInterfaceWidget::T_TerRaTronNewInterfaceWidget(QWidget *parent)
 	:QWidget(parent)
@@ -34,7 +30,6 @@ T_TerRaTronNewInterfaceWidget::~T_TerRaTronNewInterfaceWidget()
 {
 	m_workerThread->quit();
 	m_workerThread->wait();
-
 	delete m_ui;
 }
 
@@ -74,7 +69,7 @@ void T_TerRaTronNewInterfaceWidget::openFile()
 	fileHandler.close();
 	
 	m_ui->save_and_revalidate_button->setDisabled(false);
-	Q_EMIT(readValidateFileCompleted());
+	Q_EMIT(taskCompleted());
 }
 
 void T_TerRaTronNewInterfaceWidget::validate()
@@ -172,7 +167,7 @@ void T_TerRaTronNewInterfaceWidget::showResult(const T_NtcElect& rcNtcElect)
 	m_ui->progressBar->setValue(100);
 	m_ui->progressBar->hide();
 	//Signal to mainWindow in order to activate actions / tool bar
-	Q_EMIT(readValidateFileCompleted());
+	Q_EMIT(taskCompleted());
 }
 
 //Method used to show/hide the checkable box for autovalidation
@@ -180,6 +175,7 @@ void T_TerRaTronNewInterfaceWidget::showHide()
 {
 	if (!m_ui->autoValidate_checkBox->isVisible()) {
 		m_ui->autoValidate_checkBox->setVisible(true);
+		m_ui->autoValidate_checkBox->setEnabled(true);
 		return;
 	}
 	if (m_ui->autoValidate_checkBox->isVisible()) {
@@ -194,8 +190,6 @@ void T_TerRaTronNewInterfaceWidget::autoValidate()
 	//connect or disconnect the automatic validation when check/uncheck the box
 	if (m_ui->autoValidate_checkBox->isChecked()) {
 		connect(m_ui->fileContent_textEdit, &QPlainTextEdit::textChanged, this, &T_TerRaTronNewInterfaceWidget::validate);
-		//Validate by default when it get activated
-		validate();
 		return;
 	}
 	disconnect(m_ui->fileContent_textEdit, &QPlainTextEdit::textChanged, this, &T_TerRaTronNewInterfaceWidget::validate);

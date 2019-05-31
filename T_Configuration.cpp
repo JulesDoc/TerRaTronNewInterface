@@ -12,15 +12,7 @@ RCT_DBName T_Configuration::settingsDBNameToEnum{ T_DBName::TRS_DB };
 
 QString T_Configuration::settingsPath{};
 
-T_Configuration::T_Configuration()
-{
-	
-}
-
-T_Configuration::~T_Configuration()
-{
-
-}
+T_Configuration::T_Configuration(){}
 
 void T_Configuration::saveSettings()
 {

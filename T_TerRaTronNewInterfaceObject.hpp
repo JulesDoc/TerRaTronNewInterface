@@ -11,8 +11,8 @@ class T_TerRaTronNewInterfaceObject: public QObject
 	Q_OBJECT
 
 public:
-	T_TerRaTronNewInterfaceObject();
-	virtual ~T_TerRaTronNewInterfaceObject();
+	T_TerRaTronNewInterfaceObject() {};
+	virtual ~T_TerRaTronNewInterfaceObject() {};
 	
 public slots:
 	void validate(const QString &);

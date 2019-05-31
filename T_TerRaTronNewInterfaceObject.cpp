@@ -5,14 +5,6 @@
 #include "T_TronContext.hpp"
 #include "T_DBTarget.hpp"
 
-T_TerRaTronNewInterfaceObject::T_TerRaTronNewInterfaceObject()
-{
-}
-
-T_TerRaTronNewInterfaceObject::~T_TerRaTronNewInterfaceObject()
-{
-}
-
 void T_TerRaTronNewInterfaceObject::validate(const QString &rcFileContent) 
 {
 	PRECONDITION(!rcFileContent.isEmpty());

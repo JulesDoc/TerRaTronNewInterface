@@ -14,7 +14,7 @@ class T_TerRaTronNewInterfaceNoticeTreeView : public QWidget
 
 public:
 	T_TerRaTronNewInterfaceNoticeTreeView(QWidget *parent = nullptr);
-	virtual ~T_TerRaTronNewInterfaceNoticeTreeView();
+	virtual ~T_TerRaTronNewInterfaceNoticeTreeView() {};
 	void updateTreeView(QString fn, const T_NtcElect&);
 
 private:
@@ -23,5 +23,5 @@ private:
 private:
 	Ui_TerRaTronNewInterfaceNoticeTreeView *m_ui;
 	QString m_fileName{};
-	static const QIcon &correspondingIcon(const int& num);
+	static const QIcon &correspondingIcon(const int& numErr, const int& numWar);
 };

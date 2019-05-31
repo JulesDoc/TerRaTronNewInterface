@@ -10,7 +10,6 @@ class T_Configuration
 {
 public:
 	T_Configuration();
-	virtual ~T_Configuration();
 	static void saveSettings();
 	static void loadSettings();
 	static void setSettingsPath(QString);

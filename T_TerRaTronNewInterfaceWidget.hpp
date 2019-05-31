@@ -50,7 +50,7 @@ public slots:
 signals:
 	/*Signals sent from widget to mainWindow
 	in order to activate/deactivate tool bar*/
-	void readValidateFileCompleted();
+	void taskCompleted();
 	void disableWindowsInMain();
 
 private:
